@@ -30,19 +30,19 @@ public class AnalysisNoriPlugin extends Plugin implements AnalysisPlugin {
     @Override
     public Map<String, AnalysisProvider<TokenFilterFactory>> getTokenFilters() {
         Map<String, AnalysisProvider<TokenFilterFactory>> extra = new HashMap<>();
-        extra.put("nori_part_of_speech", NoriPartOfSpeechStopFilterFactory::new);
-        extra.put("nori_readingform", NoriReadingFormFilterFactory::new);
-        extra.put("nori_number", NoriNumberFilterFactory::new);
+        extra.put("dobby_part_of_speech", NoriPartOfSpeechStopFilterFactory::new);
+        extra.put("dobby_readingform", NoriReadingFormFilterFactory::new);
+        extra.put("dobby_number", NoriNumberFilterFactory::new);
         return extra;
     }
 
     @Override
     public Map<String, AnalysisProvider<TokenizerFactory>> getTokenizers() {
-        return singletonMap("nori_tokenizer", NoriTokenizerFactory::new);
+        return singletonMap("dobby_tokenizer", NoriTokenizerFactory::new);
     }
 
     @Override
     public Map<String, AnalysisProvider<AnalyzerProvider<? extends Analyzer>>> getAnalyzers() {
-        return singletonMap("nori", NoriAnalyzerProvider::new);
+        return singletonMap("dobby", NoriAnalyzerProvider::new);
     }
 }
