@@ -13,7 +13,7 @@ esplugin {
 }
 
 dependencies {
-  api files ("/opt/lucene-solr-releases-lucene-solr-8.8.2/lucene/build/analysis/nori/lucene-analyzers-nori-8.8.2-SNAPSHOT.jar")
+  api "org.apache.lucene:lucene-analyzers-nori:${versions.lucene}"
 }
 
 restResources {
