@@ -14,7 +14,7 @@ esplugin {
 }
 
 dependencies {
-  api files('/opt/lucene-analysis-nori-9.6.0-SNAPSHOT.jar')
+  api files('/opt/lucene/lucene/analysis/nori/build/libs/lucene-analysis-nori-9.6.0-SNAPSHOT.jar')
 }
 
 restResources {
