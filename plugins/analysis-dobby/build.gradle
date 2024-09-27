@@ -8,13 +8,17 @@
 apply plugin: 'elasticsearch.legacy-yaml-rest-test'
 apply plugin: 'elasticsearch.legacy-yaml-rest-compat-test'
 
+repositories {
+  mavenLocal()
+}
+
 esplugin {
   description 'The Korean (nori) Analysis plugin integrates Lucene nori analysis module into elasticsearch.'
   classname 'org.elasticsearch.plugin.analysis.nori.AnalysisNoriPlugin'
 }
 
 dependencies {
-  api "org.apache.lucene:lucene-analysis-nori:${versions.lucene}"
+  api('org.apache.lucene:nori:9.10.0')
 }
 
 restResources {

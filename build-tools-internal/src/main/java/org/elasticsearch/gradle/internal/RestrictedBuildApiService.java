@@ -40,6 +40,7 @@ public abstract class RestrictedBuildApiService implements BuildService<Restrict
         map.put(LegacyRestTestBasePlugin.class, ":plugins:analysis-icu");
         map.put(LegacyRestTestBasePlugin.class, ":plugins:analysis-kuromoji");
         map.put(LegacyRestTestBasePlugin.class, ":plugins:analysis-nori");
+        map.put(LegacyRestTestBasePlugin.class, ":plugins:analysis-dobby");
         map.put(LegacyRestTestBasePlugin.class, ":plugins:analysis-phonetic");
         map.put(LegacyRestTestBasePlugin.class, ":plugins:analysis-smartcn");
         map.put(LegacyRestTestBasePlugin.class, ":plugins:analysis-stempel");
