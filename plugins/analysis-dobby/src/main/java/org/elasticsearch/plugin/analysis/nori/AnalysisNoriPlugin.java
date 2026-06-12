@@ -10,6 +10,7 @@ package org.elasticsearch.plugin.analysis.nori;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.elasticsearch.index.analysis.AnalyzerProvider;
+import org.elasticsearch.index.analysis.DobbyNumberUnitFilterFactory;
 import org.elasticsearch.index.analysis.NoriAnalyzerProvider;
 import org.elasticsearch.index.analysis.NoriNumberFilterFactory;
 import org.elasticsearch.index.analysis.NoriPartOfSpeechStopFilterFactory;
@@ -33,6 +34,7 @@ public class AnalysisNoriPlugin extends Plugin implements AnalysisPlugin {
         extra.put("dobby_part_of_speech", NoriPartOfSpeechStopFilterFactory::new);
         extra.put("dobby_readingform", NoriReadingFormFilterFactory::new);
         extra.put("dobby_number", NoriNumberFilterFactory::new);
+        extra.put("dobby_number_unit", DobbyNumberUnitFilterFactory::new);
         return extra;
     }
 
