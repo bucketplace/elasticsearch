@@ -28,6 +28,7 @@ public class AnalysisNoriPlugin extends Plugin implements AnalysisPlugin {
         extra.put("dobby_part_of_speech", NoriPartOfSpeechStopFilterFactory::new);
         extra.put("dobby_readingform", NoriReadingFormFilterFactory::new);
         extra.put("dobby_number", NoriNumberFilterFactory::new);
+        extra.put("dobby_number_unit", DobbyNumberUnitFilterFactory::new);
         return extra;
     }
 
