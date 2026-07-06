@@ -45,6 +45,13 @@ import java.util.Set;
  *
  * <p>결합 토큰의 품사 속성은 비워 두므로({@code leftPOS == null}) 다운스트림
  * {@link org.apache.lucene.analysis.ko.KoreanPartOfSpeechStopFilter}에서 항상 보존된다.
+ *
+ * <p><b>필터 순서 의존성.</b> 본 필터는 {@code dobby_part_of_speech}(POS stop filter)보다
+ * <em>앞</em>에 배치해야 하며, 결합 토큰 span 내부의 구성 토큰(예: {@code 1.5개}의 {@code ./SY})을
+ * stop filter로 제거해서는 안 된다. 내부 구성 토큰이 제거되면 position이 collapse되어 결합 토큰의
+ * posLength가 실제 position 수와 어긋나고 phrase/span 쿼리가 오동작한다. 기본 nori stoptags에는
+ * {@code SN/SY/SC}가 없어 현재 설정에선 안전하지만, {@code dobby_part_of_speech}의 stoptags에
+ * 이들을 추가하면 그래프가 깨지므로 주의한다.
  */
 public final class DobbyNumberUnitFilter extends TokenFilter {
 
@@ -111,7 +118,6 @@ public final class DobbyNumberUnitFilter extends TokenFilter {
         int lastEnd = first.endOffset;
         Tok unit = null;
 
-        scan:
         while (true) {
             Tok t = nextTok();
             if (t == null) {
@@ -140,7 +146,7 @@ public final class DobbyNumberUnitFilter extends TokenFilter {
                     pushback.push(u);
                 }
                 pushback.push(t);
-                break scan;
+                break;
             }
             if (isUnit(t)) {
                 unit = t;
@@ -197,7 +203,12 @@ public final class DobbyNumberUnitFilter extends TokenFilter {
     }
 
     private boolean isSeparator(Tok t) {
-        return t.term.length() == 1 && separators.contains(t.term.charAt(0));
+        // 구분자는 term 글자뿐 아니라 POS도 SY/SC여야 한다. 같은 '.'이라도 문장 종결부호(SF)처럼
+        // 다른 POS로 태깅된 토큰을 숫자 구분자로 오인하지 않게 하는 방어 장치다. 다만 mecab-ko-dic은
+        // 숫자 사이에 낀 기호를 대부분 SY(., ~, -)/SC(, · /)로 태깅하므로 기본 사전에선 결합 결과가 바뀌지 않는다.
+        return t.term.length() == 1
+            && separators.contains(t.term.charAt(0))
+            && (t.leftPOS == POS.Tag.SY || t.leftPOS == POS.Tag.SC);
     }
 
     private boolean isUnit(Tok t) {
