@@ -82,6 +82,46 @@ public class DobbyNumberUnitFilterTests extends ESTokenStreamTestCase {
         );
     }
 
+    public void testUnitBetweenNumbersIsNotCombined() throws IOException {
+        TokenStream stream = analyze(filterFactory(Settings.EMPTY), "1100x600");
+        assertTokenStreamContents(
+            stream,
+            new String[] { "1100", "x", "600" },
+            new int[] { 0, 4, 5 },
+            new int[] { 4, 5, 8 },
+            null,
+            new int[] { 1, 1, 1 },
+            new int[] { 1, 1, 1 }
+        );
+    }
+
+    public void testUnitBetweenNumbersCombinedWhenSkipDisabled() throws IOException {
+        Settings settings = Settings.builder().put("index.analysis.filter.my_filter.skip_unit_between_numbers", false).build();
+        TokenStream stream = analyze(filterFactory(settings), "1100x600");
+        assertTokenStreamContents(
+            stream,
+            new String[] { "1100", "1100x", "x", "600" },
+            new int[] { 0, 0, 4, 5 },
+            new int[] { 4, 5, 5, 8 },
+            null,
+            new int[] { 1, 0, 1, 1 },
+            new int[] { 1, 2, 1, 1 }
+        );
+    }
+
+    public void testDimensionWithTrailingUnitCombinesOnlyLastNumber() throws IOException {
+        TokenStream stream = analyze(filterFactory(Settings.EMPTY), "1100x600mm");
+        assertTokenStreamContents(
+            stream,
+            new String[] { "1100", "x", "600", "600mm", "mm" },
+            new int[] { 0, 4, 5, 5, 8 },
+            new int[] { 4, 5, 8, 10, 10 },
+            null,
+            new int[] { 1, 1, 1, 0, 1 },
+            new int[] { 1, 1, 1, 2, 1 }
+        );
+    }
+
     public void testWhitelistedCommonNounUnit() throws IOException {
         Settings settings = Settings.builder().putList("index.analysis.filter.my_filter.units_whitelist", "박스").build();
         TokenStream stream = analyze(filterFactory(settings), "2박스");
@@ -93,6 +133,20 @@ public class DobbyNumberUnitFilterTests extends ESTokenStreamTestCase {
             null,
             new int[] { 1, 0, 1 },
             new int[] { 1, 2, 1 }
+        );
+    }
+
+    public void testBlacklistedUnitIsNotCombined() throws IOException {
+        Settings settings = Settings.builder().putList("index.analysis.filter.my_filter.units_blacklist", "개").build();
+        TokenStream stream = analyze(filterFactory(settings), "1개");
+        assertTokenStreamContents(
+            stream,
+            new String[] { "1", "개" },
+            new int[] { 0, 1 },
+            new int[] { 1, 2 },
+            null,
+            new int[] { 1, 1 },
+            new int[] { 1, 1 }
         );
     }
 
