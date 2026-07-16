@@ -27,7 +27,10 @@ import java.util.Set;
  * <ul>
  *   <li>{@code number_separators} (문자열, 기본 {@code .~-∼}) — 숫자덩어리 내부 구분자.</li>
  *   <li>{@code units_whitelist} / {@code units_whitelist_path} — {@code NNBC/SL} 외 추가 {@code NNG} 단위.</li>
+ *   <li>{@code units_blacklist} / {@code units_blacklist_path} — 품사와 무관하게 단위로 취급하지 않을 term.</li>
  *   <li>{@code preserve_original} (불리언, 기본 {@code true}) — 원토큰 보존 여부.</li>
+ *   <li>{@code skip_unit_between_numbers} (불리언, 기본 {@code true}) — 숫자 사이에 낀 단위 후보
+ *       (예: {@code 1100x600}의 {@code x})는 결합하지 않음.</li>
  * </ul>
  */
 public class DobbyNumberUnitFilterFactory extends AbstractTokenFilterFactory {
@@ -36,7 +39,9 @@ public class DobbyNumberUnitFilterFactory extends AbstractTokenFilterFactory {
 
     private final Set<Character> separators;
     private final Set<String> unitWhitelist;
+    private final Set<String> unitBlacklist;
     private final boolean preserveOriginal;
+    private final boolean skipUnitBetweenNumbers;
 
     public DobbyNumberUnitFilterFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
         super(name, settings);
@@ -53,11 +58,17 @@ public class DobbyNumberUnitFilterFactory extends AbstractTokenFilterFactory {
             ? Collections.unmodifiableSet(new HashSet<>(whitelist))
             : Collections.emptySet();
 
+        List<String> blacklist = Analysis.getWordList(env, settings, "units_blacklist");
+        this.unitBlacklist = blacklist != null
+            ? Collections.unmodifiableSet(new HashSet<>(blacklist))
+            : Collections.emptySet();
+
         this.preserveOriginal = settings.getAsBoolean("preserve_original", true);
+        this.skipUnitBetweenNumbers = settings.getAsBoolean("skip_unit_between_numbers", true);
     }
 
     @Override
     public TokenStream create(TokenStream tokenStream) {
-        return new DobbyNumberUnitFilter(tokenStream, separators, unitWhitelist, preserveOriginal);
+        return new DobbyNumberUnitFilter(tokenStream, separators, unitWhitelist, unitBlacklist, preserveOriginal, skipUnitBetweenNumbers);
     }
 }
