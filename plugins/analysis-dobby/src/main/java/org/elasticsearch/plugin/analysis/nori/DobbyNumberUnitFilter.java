@@ -43,6 +43,8 @@ import java.util.Set;
  * <p>{@link #skipUnitBetweenNumbers}가 true이면 단위 후보 바로 뒤에 SN 토큰이 offset 인접해
  * 이어지는 경우 결합하지 않는다. {@code 1100x600}의 {@code x/SL}처럼 숫자 사이에 낀 토큰은
  * 단위가 아니라 치수 구분자(infix)이기 때문이다.
+ * 한계: 공백 없이 수량이 이어지면(예: {@code 2박스3개}) 정당한 단위 결합도 억제된다
+ * — 실사용 텍스트는 수량 사이 공백 존재를 전제로 한다.
  *
  * <p>{@link #preserveOriginal}가 true이면 원토큰을 모두 유지하면서 결합 토큰을 같은 위치에
  * 중첩(posInc=0, posLength=덩어리+단위 토큰 수)으로 추가한다. 예: {@code 1.5개} →
